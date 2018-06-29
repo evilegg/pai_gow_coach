@@ -9,7 +9,6 @@ FLUSH          = 1 << 5
 FULL_HOUSE     = 1 << 6
 FOUR_OFA_KIND  = 1 << 7
 STRAIGHT_FLUSH = 1 << 8
-FIVE_OFA_KIND  = 1 << 9
 
 
 class Card(object):
