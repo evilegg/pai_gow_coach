@@ -6,9 +6,6 @@ import poker
 
 class PokerEnumScoringTestCase(unittest.TestCase):
 
-    def testFiveOfaKind(self):
-        self.assertTrue(poker.FIVE_OFA_KIND > poker.STRAIGHT_FLUSH)
-
     def testStraightFlush(self):
         self.assertTrue(poker.STRAIGHT_FLUSH > poker.FOUR_OFA_KIND)
 
@@ -36,9 +33,6 @@ class PokerEnumScoringTestCase(unittest.TestCase):
 
 class PokerHandScoringTestCase(unittest.TestCase):
 
-    def testFiveOfaKind(self):
-        self.assertTrue(poker.FiveOfaKind() > poker.StraightFlush())
-
     def testStraightFlush(self):
         self.assertTrue(poker.StraightFlush() > poker.FourOfaKind())
 
@@ -64,9 +58,20 @@ class PokerHandScoringTestCase(unittest.TestCase):
         self.assertTrue(poker.Pair() > poker.HighCard())
 
 
+class StraightTestCase(unittest.TestCase):
+    def testStraightIsIdentified(self):
+        self.assertEquals(poker.hand('As 2c 3s 4s 5s').rank,
+                          poker.STRAIGHT)
+
+    def testHigherStraightWins(self):
+        self.assertTrue(poker.hand('As 2c 3s 4s 5s') >
+                        poker.hand('2c 3s 4s 5s 6s'))
+
+
 class FlushTestCase(unittest.TestCase):
     def testFlushIsIdentified(self):
-        self.assertIsInstance(poker.hand('As 3s 4s 5s 6s'), poker.Flush)
+        self.assertEquals(poker.hand('As 3s 4s 5s 6s').rank,
+                          poker.FLUSH)
 
     def testHigherFlushWins(self):
         self.assertTrue(poker.hand('As 3s 4s 5s 6s') >
