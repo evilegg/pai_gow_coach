@@ -65,10 +65,10 @@ class PokerHandScoringTestCase(unittest.TestCase):
 
 
 class FlushTestCase(unittest.TestCase):
-    def testFlush(self):
+    def testFlushIsIdentified(self):
         self.assertIsInstance(poker.hand('As 3s 4s 5s 6s'), poker.Flush)
 
-    def testFlush(self):
+    def testHigherFlushWins(self):
         self.assertTrue(poker.hand('As 3s 4s 5s 6s') >
                         poker.hand('Ks 3s 4s 5s 6s'))
 
