@@ -4,7 +4,7 @@ import unittest
 import poker
 
 
-class PokerScoringTestCase(unittest.TestCase):
+class PokerEnumScoringTestCase(unittest.TestCase):
 
     def testFiveOfaKind(self):
         self.assertTrue(poker.FIVE_OFA_KIND > poker.STRAIGHT_FLUSH)
@@ -32,6 +32,36 @@ class PokerScoringTestCase(unittest.TestCase):
 
     def testPair(self):
         self.assertTrue(poker.PAIR > poker.HIGH_CARD)
+
+
+class PokerHandScoringTestCase(unittest.TestCase):
+
+    def testFiveOfaKind(self):
+        self.assertTrue(poker.FiveOfaKind() > poker.StraightFlush())
+
+    def testStraightFlush(self):
+        self.assertTrue(poker.StraightFlush() > poker.FourOfaKind())
+
+    def testFourOfaKind(self):
+        self.assertTrue(poker.FourOfaKind() > poker.FullHouse())
+
+    def testFullHouse(self):
+        self.assertTrue(poker.FullHouse() > poker.Flush())
+
+    def testFlush(self):
+        self.assertTrue(poker.Flush() > poker.Straight())
+
+    def testStraight(self):
+        self.assertTrue(poker.Straight() > poker.ThreeOfaKind())
+
+    def testThreeOfaKind(self):
+        self.assertTrue(poker.ThreeOfaKind() > poker.TwoPair())
+
+    def testTwoPair(self):
+        self.assertTrue(poker.TwoPair() > poker.Pair())
+
+    def testPair(self):
+        self.assertTrue(poker.Pair() > poker.HighCard())
 
 
 if '__main__' == __name__:
