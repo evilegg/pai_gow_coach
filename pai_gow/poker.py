@@ -57,3 +57,25 @@ class Pair(PokerHand):
 
 class HighCard(PokerHand):
     RANK = HIGH_CARD
+
+
+class Card(object):
+    def __init__(self, spec):
+        self.rank = spec[0]
+        self.suit = spec[1]
+
+
+def is_flush(cards):
+    suit = None
+    for card in cards:
+        if suit is None:
+            suit = card.suit
+        elif card.suit != suit:
+            return False
+    return True
+
+
+def hand(card_spec):
+    cards = sorted(Card(card) for card in card_spec.split())
+    if is_flush(cards):
+        return Flush()

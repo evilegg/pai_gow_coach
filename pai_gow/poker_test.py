@@ -64,5 +64,10 @@ class PokerHandScoringTestCase(unittest.TestCase):
         self.assertTrue(poker.Pair() > poker.HighCard())
 
 
+class PokerHandTestCase(unittest.TestCase):
+    def testFlush(self):
+        self.assertIsInstance(poker.hand('As 3s 4s 5s 6s'), poker.Flush)
+
+
 if '__main__' == __name__:
     unittest.main()
