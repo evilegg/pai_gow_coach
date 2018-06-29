@@ -12,9 +12,24 @@ STRAIGHT_FLUSH = 1 << 8
 FIVE_OFA_KIND  = 1 << 9
 
 
+class Card(object):
+    RANKS = dict(reversed(e) for e in enumerate(
+                 '2 3 4 5 6 7 8 9 T J Q K A'.split()))
+    def __init__(self, card_spec):
+        rank, suit = card_spec
+        self.rank = self.RANKS.get(rank, -1)
+        self.suit = suit
+
+    def __cmp__(self, other):
+        return cmp(self.rank, other.rank)
+
+
 class PokerHand(object):
     """Base poker hand."""
     RANK = None
+    def __init__(self, cards=None):
+        self.cards = cards or []
+
     def __cmp__(self, other):
         return cmp(self.RANK, other.RANK)
 
@@ -59,12 +74,6 @@ class HighCard(PokerHand):
     RANK = HIGH_CARD
 
 
-class Card(object):
-    def __init__(self, spec):
-        self.rank = spec[0]
-        self.suit = spec[1]
-
-
 def is_flush(cards):
     suit = None
     for card in cards:
@@ -78,4 +87,4 @@ def is_flush(cards):
 def hand(card_spec):
     cards = sorted(Card(card) for card in card_spec.split())
     if is_flush(cards):
-        return Flush()
+        return Flush(cards)

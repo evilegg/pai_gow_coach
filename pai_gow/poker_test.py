@@ -68,6 +68,26 @@ class PokerHandTestCase(unittest.TestCase):
     def testFlush(self):
         self.assertIsInstance(poker.hand('As 3s 4s 5s 6s'), poker.Flush)
 
+    def testFlush(self):
+        self.assertTrue(poker.hand('As 3s 4s 5s 6s') >
+                        poker.hand('Ks 3s 4s 5s 6s'))
+
+
+class PokerCardTestCase(unittest.TestCase):
+    def testRankComparisons(self):
+        self.assertTrue(poker.Card('As') > poker.Card('Ks'))
+        self.assertTrue(poker.Card('Ks') > poker.Card('Qs'))
+        self.assertTrue(poker.Card('Qs') > poker.Card('Js'))
+        self.assertTrue(poker.Card('Js') > poker.Card('Ts'))
+        self.assertTrue(poker.Card('Ts') > poker.Card('9s'))
+        self.assertTrue(poker.Card('9s') > poker.Card('8s'))
+        self.assertTrue(poker.Card('8s') > poker.Card('7s'))
+        self.assertTrue(poker.Card('7s') > poker.Card('6s'))
+        self.assertTrue(poker.Card('6s') > poker.Card('5s'))
+        self.assertTrue(poker.Card('5s') > poker.Card('4s'))
+        self.assertTrue(poker.Card('4s') > poker.Card('3s'))
+        self.assertTrue(poker.Card('3s') > poker.Card('2s'))
+
 
 if '__main__' == __name__:
     unittest.main()
