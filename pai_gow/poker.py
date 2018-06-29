@@ -27,11 +27,17 @@ class Card(object):
 class PokerHand(object):
     """Base poker hand."""
     RANK = None
-    def __init__(self, cards=None):
-        self.cards = cards or []
+    def __init__(self, card_specs=None):
+        if card_specs is None:
+            self.cards = []
+        else:
+            self.cards = [Card(spec) for spec in card_specs]
 
     def __cmp__(self, other):
-        return cmp(self.RANK, other.RANK)
+        lhs = self.cards[0] if self.cards else None
+        rhs = other.cards[0] if other.cards else None
+
+        return cmp((self.RANK, lhs), (other.RANK, rhs))
 
 
 class FiveOfaKind(PokerHand):
@@ -87,4 +93,4 @@ def is_flush(cards):
 def hand(card_spec):
     cards = sorted(Card(card) for card in card_spec.split())
     if is_flush(cards):
-        return Flush(cards)
+        return Flush(card_spec.split())
