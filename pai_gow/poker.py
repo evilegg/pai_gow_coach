@@ -61,12 +61,31 @@ def is_straight(cards):
     return True
 
 
-def _is_three_ofa_kind(cards):
+def _count_matches(cards):
     groupings = collections.Counter()
     for card in cards:
         groupings[card.rank] += 1
-        if 3 == groupings[card.rank]:
-            break
+    return list(reversed(groupings.values()))
+
+
+def _is_three_ofa_kind(cards):
+    return [3, 1, 1] == _count_matches(cards)
+
+
+def _is_four_ofa_kind(cards):
+    return [4, 1] == _count_matches(cards)
+
+
+def _is_full_house(cards):
+    return [3, 2] == _count_matches(cards)
+
+
+def _is_two_pair(cards):
+    return [3, 1, 1] == _count_matches(cards)
+
+
+def _is_pair(cards):
+    return [2, 1, 1] == _count_matches(cards)
 
 
 class PokerHand(object):
@@ -82,16 +101,25 @@ class PokerHand(object):
 
         if _is_flush and _is_straight:
             self.rank = STRAIGHT_FLUSH
+        elif _is_four_ofa_kind(self.cards):
+            self.rank = FOUR_OFA_KIND
+        elif _is_full_house(self.cards):
+            self.rank = FULL_HOUSE
         elif _is_flush:
             self.rank = FLUSH
         elif _is_straight:
             self.rank = STRAIGHT
-        elif _is_three_ofa_kind:
+        elif _is_three_ofa_kind(self.cards):
+            self.rank = THREE_OFA_KIND
+        elif _is_two_pair(self.cards):
+            self.rank = THREE_OFA_KIND
+        elif _is_pair(self.cards):
             self.rank = THREE_OFA_KIND
         else:
             self.rank = HIGH_CARD
 
     def __cmp__(self, other):
+        # FIXME: calculate by all cards
         lhs = self.cards[-1] if self.cards else None
         rhs = other.cards[-1] if other.cards else None
 
