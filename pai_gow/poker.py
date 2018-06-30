@@ -65,27 +65,27 @@ def _count_matches(cards):
     groupings = collections.Counter()
     for card in cards:
         groupings[card.rank] += 1
-    return list(reversed(groupings.values()))
+    return list(sorted(groupings.values()))
 
 
 def _is_three_ofa_kind(cards):
-    return [3, 1, 1] == _count_matches(cards)
+    return [1, 1, 3] == _count_matches(cards)
 
 
 def _is_four_ofa_kind(cards):
-    return [4, 1] == _count_matches(cards)
+    return [1, 4] == _count_matches(cards)
 
 
 def _is_full_house(cards):
-    return [3, 2] == _count_matches(cards)
+    return [2, 3] == _count_matches(cards)
 
 
 def _is_two_pair(cards):
-    return [3, 1, 1] == _count_matches(cards)
+    return [1, 2, 2] == _count_matches(cards)
 
 
 def _is_pair(cards):
-    return [2, 1, 1] == _count_matches(cards)
+    return [1, 1, 1, 2] == _count_matches(cards)
 
 
 class PokerHand(object):
@@ -112,9 +112,9 @@ class PokerHand(object):
         elif _is_three_ofa_kind(self.cards):
             self.rank = THREE_OFA_KIND
         elif _is_two_pair(self.cards):
-            self.rank = THREE_OFA_KIND
+            self.rank = TWO_PAIR
         elif _is_pair(self.cards):
-            self.rank = THREE_OFA_KIND
+            self.rank = PAIR
         else:
             self.rank = HIGH_CARD
 

@@ -58,11 +58,48 @@ class PokerHandScoringTestCase(unittest.TestCase):
         self.assertTrue(poker.Pair() > poker.HighCard())
 
 
-class TwoPairTestCase(unittest.TestCase):
-    def testHandIsIdentified(self):
+class PokerHandIdentification(unittest.TestCase):
+    def testStraightFlush(self):
+        self.assertEquals(poker.hand('As 2s 3s 4s 5s').rank,
+                          poker.STRAIGHT_FLUSH)
+
+        self.assertEquals(poker.hand('3c 4c 5c 6c 7c').rank,
+                          poker.STRAIGHT_FLUSH)
+
+    def testFourOfaKind(self):
+        self.assertEquals(poker.hand('As Ac Ad Ah 6s').rank,
+                          poker.FOUR_OFA_KIND)
+
+    def testFullHouse(self):
+        self.assertEquals(poker.hand('As Ac 4s 4c 4d').rank,
+                          poker.FULL_HOUSE)
+
+    def testFlush(self):
+        self.assertEquals(poker.hand('As 3s 4s 5s 6s').rank,
+                          poker.FLUSH)
+
+    def testStraight(self):
+        self.assertEquals(poker.hand('As 2c 3s 4s 5s').rank,
+                          poker.STRAIGHT)
+
+    def testThreeOfaKind(self):
+        self.assertEquals(poker.hand('As Ac Ad 3s 5s').rank,
+                          poker.THREE_OFA_KIND)
+
+    def testTwoPair(self):
         self.assertEquals(poker.hand('As Ac 3d 3s 5s').rank,
                           poker.TWO_PAIR)
 
+    def testOnePair(self):
+        self.assertEquals(poker.hand('As Ac 3d 4s 5s').rank,
+                          poker.PAIR)
+
+    def testHighCard(self):
+        self.assertEquals(poker.hand('As Kc 3d 4s 5s').rank,
+                          poker.HIGH_CARD)
+
+
+class TwoPairTestCase(unittest.TestCase):
     def testHigherHandWins(self):
         self.assertTrue(poker.hand('As Ac 3d 3s 5s') >
                         poker.hand('Ks Kc 3d 5c 5d'))
@@ -72,30 +109,18 @@ class TwoPairTestCase(unittest.TestCase):
                         poker.hand('Ks Kc 3d 5c 5d'))
 
 class ThreeOfaKindTestCase(unittest.TestCase):
-    def testHandIsIdentified(self):
-        self.assertEquals(poker.hand('As Ac Ad 3s 5s').rank,
-                          poker.THREE_OFA_KIND)
-
     def testHigherHandWins(self):
         self.assertTrue(poker.hand('As Ac Ad 3s 5s') >
                         poker.hand('Ks Kc Ks 3d 5d'))
 
 
 class StraightTestCase(unittest.TestCase):
-    def testHandIsIdentified(self):
-        self.assertEquals(poker.hand('As 2c 3s 4s 5s').rank,
-                          poker.STRAIGHT)
-
     def testHigherStraightWins(self):
         self.assertTrue(poker.hand('As 2c 3s 4s 5s') >
                         poker.hand('2c 3s 4s 5s 6s'))
 
 
 class FlushTestCase(unittest.TestCase):
-    def testHandIsIdentified(self):
-        self.assertEquals(poker.hand('As 3s 4s 5s 6s').rank,
-                          poker.FLUSH)
-
     def testHigherFlushWins(self):
         self.assertTrue(poker.hand('As 3s 4s 5s 6s') >
                         poker.hand('Ks 3s 4s 5s 6s'))
