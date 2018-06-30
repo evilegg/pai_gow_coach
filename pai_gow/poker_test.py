@@ -58,6 +58,16 @@ class PokerHandScoringTestCase(unittest.TestCase):
         self.assertTrue(poker.Pair() > poker.HighCard())
 
 
+class ThreeOfaKindTestCase(unittest.TestCase):
+    def testThreeOfaKindIdentified(self):
+        self.assertEquals(poker.hand('As Ac Ad 3s 5s').rank,
+                          poker.THREE_OFA_KIND)
+
+    def testHigherHandWins(self):
+        self.assertTrue(poker.hand('As Ac Ad 3s 5s') >
+                        poker.hand('Ks Kc Ks 3d 5d'))
+
+
 class StraightTestCase(unittest.TestCase):
     def testStraightIsIdentified(self):
         self.assertEquals(poker.hand('As 2c 3s 4s 5s').rank,

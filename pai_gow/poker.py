@@ -1,5 +1,9 @@
 """Cards module for playing poker."""
 
+
+import collections
+
+
 HIGH_CARD      = 1
 PAIR           = 1 << 1
 TWO_PAIR       = 1 << 2
@@ -57,6 +61,14 @@ def is_straight(cards):
     return True
 
 
+def _is_three_ofa_kind(cards):
+    groupings = collections.Counter()
+    for card in cards:
+        groupings[card.rank] += 1
+        if 3 == groupings[card.rank]:
+            break
+
+
 class PokerHand(object):
     """Base poker hand."""
     def __init__(self, card_specs=None):
@@ -74,6 +86,8 @@ class PokerHand(object):
             self.rank = FLUSH
         elif _is_straight:
             self.rank = STRAIGHT
+        elif _is_three_ofa_kind:
+            self.rank = THREE_OFA_KIND
         else:
             self.rank = HIGH_CARD
 
