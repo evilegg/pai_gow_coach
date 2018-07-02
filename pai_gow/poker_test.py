@@ -1,7 +1,7 @@
 import unittest
 
 
-import poker
+from . import poker
 
 
 class PokerEnumScoringTestCase(unittest.TestCase):
