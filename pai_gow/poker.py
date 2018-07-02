@@ -43,12 +43,13 @@ def is_flush(cards):
 
 
 def is_straight(cards):
+        # catch the wheel which doesn't come in order when sorted
     if (cards and
-        cards[4].rank == Card.RANKS['A'] and
         cards[0].rank == Card.RANKS['2'] and
         cards[1].rank == Card.RANKS['3'] and
         cards[2].rank == Card.RANKS['4'] and
-        cards[3].rank == Card.RANKS['5']):
+        cards[3].rank == Card.RANKS['5'] and
+        cards[4].rank == Card.RANKS['A']):
         return True
 
     last_rank = None
