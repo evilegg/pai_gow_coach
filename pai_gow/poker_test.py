@@ -126,6 +126,12 @@ class FlushTestCase(unittest.TestCase):
                         poker.hand('Ks 3s 4s 5s 6s'))
 
 
+class FourOfaKindTestCase(unittest.TestCase):
+    def testHigherHandWins(self):
+        self.assertTrue(poker.hand('As Ac Ad Ah 6s') >
+                        poker.hand('Ts Tc Td Th 8s'))
+
+
 class PokerCardTestCase(unittest.TestCase):
     def testRankComparisons(self):
         self.assertTrue(poker.Card('As') > poker.Card('Ks'))
