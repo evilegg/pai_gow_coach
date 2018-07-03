@@ -19,4 +19,3 @@ class Card(object):
         return '%s("%s%s")' % (self.__class__.__name__,
                                self._raw_rank,
                                self.suit)
-
