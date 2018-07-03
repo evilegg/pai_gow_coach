@@ -169,5 +169,32 @@ class HighCard(PokerHand):
         self.rank = Ranks.HIGH_CARD
 
 
-def hand(hand_spec):
-    return PokerHand(hand_spec.split())
+def hand(hand_specs):
+    """Build a poker hand"""
+    card_specs = hand_specs.split()
+    my_cards = list(sorted([Card(spec) for spec in card_specs]))
+
+    _is_flush = is_flush(my_cards)
+    _is_straight = is_straight(my_cards)
+
+    ctor = PokerHand
+
+    if _is_flush and _is_straight:
+        ctor = StraightFlush
+    elif _is_four_ofa_kind(my_cards):
+        ctor = FourOfaKind
+    elif _is_full_house(my_cards):
+        ctor = FullHouse
+    elif _is_flush:
+        ctor = Flush
+    elif _is_straight:
+        ctor = Straight
+    elif _is_three_ofa_kind(my_cards):
+        ctor = ThreeOfaKind
+    elif _is_two_pair(my_cards):
+        ctor = TwoPair
+    elif _is_pair(my_cards):
+        ctor = Pair
+    else:
+        ctor = HighCard
+    return ctor(card_specs)
