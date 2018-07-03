@@ -108,12 +108,23 @@ class PokerHand(object):
             self.rank = Ranks.HIGH_CARD
 
     def __cmp__(self, other):
-        # FIXME: calculate by all cards not just first
-        lhs = self.cards[-1] if self.cards else None
-        rhs = other.cards[-1] if other.cards else None
+        return cmp(self.score(), other.score())
 
-        return cmp((self.rank, lhs), (other.rank, rhs))
+    def score(self):
+        return (self.rank, self.order_cards())
 
+    def order_cards(self):
+        if not self.cards:
+            return []
+
+        counter = collections.Counter()
+        for card in self.cards:
+            counter[card.rank] += 1
+
+        # sort cards by count then rank
+        sorted_cards = sorted([(cnt, rank) for rank, cnt in counter.items()],
+                              reverse=True)
+        return sorted_cards
 
 class StraightFlush(PokerHand):
     def __init__(self, *args, **kwargs):
