@@ -94,38 +94,49 @@ class PokerHandIdentification(TestCase):
 
 class PairTestCase(TestCase):
     def testHigherHandWins(self):
-        self.assertTrue(poker.hand('As Ac 3d 3s 5s') >
-                        poker.hand('Ks Kc 3d 5c 5d'))
+        self.assertPokerGreaterThan('As Ks Kc 3s 5s',
+                                    'Qc Qs 2h 3h 4h')
+
+    def testFirstKicker(self):
+        self.assertPokerGreaterThan('As Ac 8s 6s 4s',
+                                    'Ad Ah 7h 6h 4h')
+
+    def testSecondKicker(self):
+        self.assertPokerGreaterThan('As Ac 8s 6s 4s',
+                                    'Ad Ah 8h 5h 4h')
+
+    def testThirdKicker(self):
+        self.assertPokerGreaterThan('As Ac 8s 6s 4s',
+                                    'Ad Ah 8h 6h 3h')
+
 class TwoPairTestCase(TestCase):
 
     @unittest.expectedFailure
     def testMismatchedHigherHand(self):
-        self.assertTrue(poker.hand('Ks Kc 3d 5c 5d') >
-                        poker.hand('As 3d 3s 4d 4s'))
+        self.assertPokerGreaterThan('Ks Kc 3d 5c 5d', 'As 3d 3s 4d 4s')
 
 
 class ThreeOfaKindTestCase(TestCase):
     def testHigherHandWins(self):
-        self.assertTrue(poker.hand('As Ac Ad 3s 5s') >
-                        poker.hand('Ks Kc Ks 3d 5d'))
+        self.assertPokerGreaterThan('As Ac Ad 3s 5s',
+                                    'Ks Kc Ks 3d 5d')
 
 
-    def testHigherStraightWins(self):
-        self.assertTrue(poker.hand('As 2c 3s 4s 5s') >
-                        poker.hand('2c 3s 4s 5s 6s'))
 class StraightTestCase(TestCase):
+    def testHigherHandWins(self):
+        self.assertPokerGreaterThan('3c 4s 5s 6s 7s',
+                                    '2c 3s 4s 5s 6s')
 
 
-    def testHigherFlushWins(self):
-        self.assertTrue(poker.hand('As 3s 4s 5s 6s') >
-                        poker.hand('Ks 3s 4s 5s 6s'))
 class FlushTestCase(TestCase):
+    def testHigherHandWins(self):
+        self.assertPokerGreaterThan('As 3s 4s 5s 6s',
+                                    'Ks 3s 4s 5s 6s')
 
 
 class FourOfaKindTestCase(TestCase):
     def testHigherHandWins(self):
-        self.assertTrue(poker.hand('As Ac Ad Ah 6s') >
-                        poker.hand('Ts Tc Td Th 8s'))
+        self.assertPokerGreaterThan('As Ac Ad Ah 6s', 'Ts Tc Td Th 8s')
 
 
 if '__main__' == __name__:
