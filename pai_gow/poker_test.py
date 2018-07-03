@@ -95,8 +95,8 @@ class TwoPairTestCase(unittest.TestCase):
 
     @unittest.expectedFailure
     def testMismatchedHigherHand(self):
-        self.assertTrue(poker.hand('As 3d 3s 4d 4s') <
-                        poker.hand('Ks Kc 3d 5c 5d'))
+        self.assertTrue(poker.hand('Ks Kc 3d 5c 5d') >
+                        poker.hand('As 3d 3s 4d 4s'))
 
 
 class ThreeOfaKindTestCase(unittest.TestCase):
