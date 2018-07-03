@@ -110,16 +110,24 @@ class PairTestCase(TestCase):
                                     'Ad Ah 8h 6h 3h')
 
 class TwoPairTestCase(TestCase):
+    def testHigherHandWins(self):
+        self.assertPokerGreaterThan('As Ac 3d 3s 5s', 'Ks Kc 3d 5c 5d')
 
-    @unittest.expectedFailure
     def testMismatchedHigherHand(self):
         self.assertPokerGreaterThan('Ks Kc 3d 5c 5d', 'As 3d 3s 4d 4s')
+
+    def testKicker(self):
+        self.assertPokerGreaterThan('Ks Kc 3s 3c 5d', 'Kd Kh 3d 3c 4d')
 
 
 class ThreeOfaKindTestCase(TestCase):
     def testHigherHandWins(self):
         self.assertPokerGreaterThan('As Ac Ad 3s 5s',
                                     'Ks Kc Ks 3d 5d')
+
+    def testRankingHandIsntHighest(self):
+        self.assertPokerGreaterThan('Qs 5s 5c 5d 3s',
+                                    'Ac 2d 2s 2c 7d')
 
 
 class StraightTestCase(TestCase):
