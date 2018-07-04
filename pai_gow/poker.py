@@ -126,6 +126,7 @@ class PokerHand(object):
                               reverse=True)
         return sorted_cards
 
+
 class StraightFlush(PokerHand):
     def __init__(self, *args, **kwargs):
         PokerHand.__init__(self, *args, **kwargs)
