@@ -89,6 +89,7 @@ def assign_rank(cards):
                     cards[0].rank == Card.RANKS['2']
                     and cards[-1].rank == Card.RANKS['A'])
 
+    # pylint: disable=E1101
     if _is_flush and _is_straight:
         return Ranks.STRAIGHT_FLUSH_WHEEL if _is_wheel else Ranks.STRAIGHT_FLUSH
     elif _is_four_ofa_kind(cards):
@@ -142,53 +143,62 @@ class Hand(object):
 class StraightFlush(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = Ranks.STRAIGHT_FLUSH
 
 
 class FourOfaKind(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = self.rank or Ranks.FOUR_OFA_KIND
 
 
 class FullHouse(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = self.rank or Ranks.FULL_HOUSE
 
 
 class Flush(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = self.rank or Ranks.FLUSH
 
 
 class Straight(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = self.rank or Ranks.STRAIGHT
 
 
 class ThreeOfaKind(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = self.rank or Ranks.THREE_OFA_KIND
 
 
 class TwoPair(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = self.rank or Ranks.TWO_PAIR
 
 
 class Pair(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = self.rank or Ranks.PAIR
 
 
 class HighCard(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = self.rank or Ranks.HIGH_CARD
 

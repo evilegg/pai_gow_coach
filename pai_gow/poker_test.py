@@ -5,6 +5,7 @@ import poker
 
 
 class PokerEnumScoringTestCase(unittest.TestCase):
+    # pylint: disable=E1101
     def testStraightFlush(self):
         self.assertGreater(poker.Ranks.STRAIGHT_FLUSH, poker.Ranks.FOUR_OFA_KIND)
 
@@ -27,6 +28,7 @@ class PokerEnumScoringTestCase(unittest.TestCase):
         self.assertGreater(poker.Ranks.TWO_PAIR, poker.Ranks.PAIR)
 
     def testPair(self):
+        # pylint: disable=E1101
         self.assertGreater(poker.Ranks.PAIR, poker.Ranks.HIGH_CARD)
 
 
@@ -57,6 +59,7 @@ class PokerHandScoringTestCase(unittest.TestCase):
 
 
 class PokerHandIdentification(unittest.TestCase):
+    # pylint: disable=E1101
     def testStraightFlush(self):
         self.assertEqual(poker.Hand('As 2s 3s 4s 5s').rank, poker.Ranks.STRAIGHT_FLUSH_WHEEL)
         self.assertEqual(poker.Hand('3c 4c 5c 6c 7c').rank, poker.Ranks.STRAIGHT_FLUSH)
