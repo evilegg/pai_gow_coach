@@ -150,5 +150,16 @@ class FourOfaKindTestCase(unittest.TestCase):
                            poker.Hand('Ts Tc Td Th 8s'))
 
 
+class StraightFlushTestCase(unittest.TestCase):
+    def testHigherHandWins(self):
+        self.assertGreater(poker.Hand('3c 4c 5c 6c 7c'),
+                           poker.Hand('2s 3s 4s 5s 6s'))
+
+    def testWheelieHand(self):
+        self.assertGreater(poker.Hand('2s 3s 4s 5s 6s'),
+                           poker.Hand('As 2s 3s 4s 5s'))
+
+
+
 if '__main__' == __name__:
     unittest.main()
