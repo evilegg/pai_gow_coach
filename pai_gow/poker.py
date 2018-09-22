@@ -79,39 +79,44 @@ def _is_pair(cards):
     return [1, 1, 1, 2] == _count_matches(cards)
 
 
+def assign_rank(cards):
+    """Assign the collection of cards a poker rank."""
+    _is_flush = is_flush(cards)
+    _is_straight = is_straight(cards)
+    _is_wheel = (is_straight and 
+                    cards and
+                    cards[0].rank == Card.RANKS['2']
+                    and cards[-1].rank == Card.RANKS['A'])
+
+    if _is_flush and _is_straight:
+        return Ranks.STRAIGHT_FLUSH_WHEEL if _is_wheel else Ranks.STRAIGHT_FLUSH
+    elif _is_four_ofa_kind(cards):
+        return Ranks.FOUR_OFA_KIND
+    elif _is_full_house(cards):
+        return Ranks.FULL_HOUSE
+    elif _is_flush:
+        return Ranks.FLUSH
+    elif _is_straight:
+        return Ranks.STRAIGHT_WHEEL if _is_wheel else Ranks.STRAIGHT
+    elif _is_three_ofa_kind(cards):
+        return Ranks.THREE_OFA_KIND
+    elif _is_two_pair(cards):
+        return Ranks.TWO_PAIR
+    elif _is_pair(cards):
+        return Ranks.PAIR
+    else:
+        return Ranks.HIGH_CARD
+
+
 class Hand(object):
     """Base poker hand."""
     def __init__(self, card_specs=None):
         if card_specs is None:
             self.cards = []
+            self.rank = None
         else:
             self.cards = list(sorted([Card(spec) for spec in card_specs.split()]))
-
-        _is_flush = is_flush(self.cards)
-        _is_straight = is_straight(self.cards)
-        _is_wheel = (is_straight and 
-                     self.cards and
-                     self.cards[0].rank == Card.RANKS['2']
-                     and self.cards[-1].rank == Card.RANKS['A'])
-
-        if _is_flush and _is_straight:
-            self.rank = Ranks.STRAIGHT_FLUSH_WHEEL if _is_wheel else Ranks.STRAIGHT_FLUSH
-        elif _is_four_ofa_kind(self.cards):
-            self.rank = Ranks.FOUR_OFA_KIND
-        elif _is_full_house(self.cards):
-            self.rank = Ranks.FULL_HOUSE
-        elif _is_flush:
-            self.rank = Ranks.FLUSH
-        elif _is_straight:
-            self.rank = Ranks.STRAIGHT_WHEEL if _is_wheel else Ranks.STRAIGHT
-        elif _is_three_ofa_kind(self.cards):
-            self.rank = Ranks.THREE_OFA_KIND
-        elif _is_two_pair(self.cards):
-            self.rank = Ranks.TWO_PAIR
-        elif _is_pair(self.cards):
-            self.rank = Ranks.PAIR
-        else:
-            self.rank = Ranks.HIGH_CARD
+            self.rank = assign_rank(self.cards)
 
     def __cmp__(self, other):
         return cmp(self.score(), other.score())
@@ -142,47 +147,47 @@ class StraightFlush(Hand):
 class FourOfaKind(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.FOUR_OFA_KIND
+        self.rank = self.rank or Ranks.FOUR_OFA_KIND
 
 
 class FullHouse(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.FULL_HOUSE
+        self.rank = self.rank or Ranks.FULL_HOUSE
 
 
 class Flush(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.FLUSH
+        self.rank = self.rank or Ranks.FLUSH
 
 
 class Straight(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.STRAIGHT
+        self.rank = self.rank or Ranks.STRAIGHT
 
 
 class ThreeOfaKind(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.THREE_OFA_KIND
+        self.rank = self.rank or Ranks.THREE_OFA_KIND
 
 
 class TwoPair(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.TWO_PAIR
+        self.rank = self.rank or Ranks.TWO_PAIR
 
 
 class Pair(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.PAIR
+        self.rank = self.rank or Ranks.PAIR
 
 
 class HighCard(Hand):
     def __init__(self, *args, **kwargs):
         Hand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.HIGH_CARD
+        self.rank = self.rank or Ranks.HIGH_CARD
 
