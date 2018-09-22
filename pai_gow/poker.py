@@ -2,24 +2,25 @@
 
 
 import collections
+import enum
 
 
 from cards import Card
 
 
-class Ranks(object):
-    """The various legal poker hands."""
-    HIGH_CARD      = 1
-    PAIR           = 1 << 1
-    TWO_PAIR       = 1 << 2
-    THREE_OFA_KIND = 1 << 3
-    STRAIGHT       = 1 << 4
-    STRAIGHT_WHEEL = STRAIGHT - 1
-    FLUSH          = 1 << 5
-    FULL_HOUSE     = 1 << 6
-    FOUR_OFA_KIND  = 1 << 7
-    STRAIGHT_FLUSH = 1 << 8
-    STRAIGHT_FLUSH_WHEEL = STRAIGHT_FLUSH - 1
+Ranks = enum.IntEnum(
+    'Ranks',
+    'HIGH_CARD'
+    ' PAIR'
+    ' TWO_PAIR'
+    ' THREE_OFA_KIND'
+    ' STRAIGHT_WHEEL'
+    ' STRAIGHT'
+    ' FLUSH'
+    ' FULL_HOUSE'
+    ' FOUR_OFA_KIND'
+    ' STRAIGHT_FLUSH_WHEEL'
+    ' STRAIGHT_FLUSH')
 
 
 def is_flush(cards):
