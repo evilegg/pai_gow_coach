@@ -14,10 +14,12 @@ class Ranks(object):
     TWO_PAIR       = 1 << 2
     THREE_OFA_KIND = 1 << 3
     STRAIGHT       = 1 << 4
+    STRAIGHT_WHEEL = STRAIGHT - 1
     FLUSH          = 1 << 5
     FULL_HOUSE     = 1 << 6
     FOUR_OFA_KIND  = 1 << 7
     STRAIGHT_FLUSH = 1 << 8
+    STRAIGHT_FLUSH_WHEEL = STRAIGHT_FLUSH - 1
 
 
 def is_flush(cards):
@@ -87,9 +89,13 @@ class PokerHand(object):
 
         _is_flush = is_flush(self.cards)
         _is_straight = is_straight(self.cards)
+        _is_wheel = (is_straight and 
+                     self.cards and
+                     self.cards[0].rank == Card.RANKS['2']
+                     and self.cards[-1].rank == Card.RANKS['A'])
 
         if _is_flush and _is_straight:
-            self.rank = Ranks.STRAIGHT_FLUSH
+            self.rank = Ranks.STRAIGHT_FLUSH_WHEEL if _is_wheel else Ranks.STRAIGHT_FLUSH
         elif _is_four_ofa_kind(self.cards):
             self.rank = Ranks.FOUR_OFA_KIND
         elif _is_full_house(self.cards):
@@ -97,7 +103,7 @@ class PokerHand(object):
         elif _is_flush:
             self.rank = Ranks.FLUSH
         elif _is_straight:
-            self.rank = Ranks.STRAIGHT
+            self.rank = Ranks.STRAIGHT_WHEEL if _is_wheel else Ranks.STRAIGHT
         elif _is_three_ofa_kind(self.cards):
             self.rank = Ranks.THREE_OFA_KIND
         elif _is_two_pair(self.cards):
@@ -185,28 +191,13 @@ def hand(hand_specs):
     """Build a poker hand"""
     card_specs = hand_specs.split()
     my_cards = list(sorted([Card(spec) for spec in card_specs]))
+    return PokerHand(card_specs)
 
-    _is_flush = is_flush(my_cards)
-    _is_straight = is_straight(my_cards)
 
-    ctor = PokerHand
+if '__main__' == __name__:
+    print hand('As 2s 3s 4s 5s').cards
+    print hand('As 2s 3s 4s 5s').rank
+    print hand('2s 3s 4s 5s 6s').rank
 
-    if _is_flush and _is_straight:
-        ctor = StraightFlush
-    elif _is_four_ofa_kind(my_cards):
-        ctor = FourOfaKind
-    elif _is_full_house(my_cards):
-        ctor = FullHouse
-    elif _is_flush:
-        ctor = Flush
-    elif _is_straight:
-        ctor = Straight
-    elif _is_three_ofa_kind(my_cards):
-        ctor = ThreeOfaKind
-    elif _is_two_pair(my_cards):
-        ctor = TwoPair
-    elif _is_pair(my_cards):
-        ctor = Pair
-    else:
-        ctor = HighCard
-    return ctor(card_specs)
+    print hand('2s 3s 4s 5s 6s') > hand('As 2s 3s 4s 5s')
+    print hand('As 2s 3s 4s 5s') > hand('2s 2c 2h 2d 6s')

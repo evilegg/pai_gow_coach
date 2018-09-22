@@ -1,7 +1,7 @@
 import unittest
 
 
-from . import poker
+import poker
 
 
 class PokerEnumScoringTestCase(unittest.TestCase):
@@ -58,32 +58,33 @@ class PokerHandScoringTestCase(unittest.TestCase):
 
 class PokerHandIdentification(unittest.TestCase):
     def testStraightFlush(self):
-        self.assertIsInstance(poker.hand('As 2s 3s 4s 5s'), poker.StraightFlush)
-        self.assertIsInstance(poker.hand('3c 4c 5c 6c 7c'), poker.StraightFlush)
+        self.assertEqual(poker.hand('As 2s 3s 4s 5s').rank, poker.Ranks.STRAIGHT_FLUSH_WHEEL)
+        self.assertEqual(poker.hand('3c 4c 5c 6c 7c').rank, poker.Ranks.STRAIGHT_FLUSH)
 
     def testFourOfaKind(self):
-        self.assertIsInstance(poker.hand('As Ac Ad Ah 6s'), poker.FourOfaKind)
+        self.assertEqual(poker.hand('As Ac Ad Ah 6s').rank, poker.Ranks.FOUR_OFA_KIND)
 
     def testFullHouse(self):
-        self.assertIsInstance(poker.hand('As Ac 4s 4c 4d'), poker.FullHouse)
+        self.assertEqual(poker.hand('As Ac 4s 4c 4d').rank, poker.Ranks.FULL_HOUSE)
 
     def testFlush(self):
-        self.assertIsInstance(poker.hand('As 3s 4s 5s 6s'), poker.Flush)
+        self.assertEqual(poker.hand('As 3s 4s 5s 6s').rank, poker.Ranks.FLUSH)
 
     def testStraight(self):
-        self.assertIsInstance(poker.hand('As 2c 3s 4s 5s'), poker.Straight)
+        self.assertEqual(poker.hand('As 2c 3s 4s 5s').rank, poker.Ranks.STRAIGHT_WHEEL)
+        self.assertEqual(poker.hand('2c 3s 4s 5s 6c').rank, poker.Ranks.STRAIGHT)
 
     def testThreeOfaKind(self):
-        self.assertIsInstance(poker.hand('As Ac Ad 3s 5s'), poker.ThreeOfaKind)
+        self.assertEqual(poker.hand('As Ac Ad 3s 5s').rank, poker.Ranks.THREE_OFA_KIND)
 
     def testTwoPair(self):
-        self.assertIsInstance(poker.hand('As Ac 3d 3s 5s'), poker.TwoPair)
+        self.assertEqual(poker.hand('As Ac 3d 3s 5s').rank, poker.Ranks.TWO_PAIR)
 
     def testOnePair(self):
-        self.assertIsInstance(poker.hand('As Ac 3d 4s 5s'), poker.Pair)
+        self.assertEqual(poker.hand('As Ac 3d 4s 5s').rank, poker.Ranks.PAIR)
 
     def testHighCard(self):
-        self.assertIsInstance(poker.hand('As Kc 3d 4s 5s'), poker.HighCard)
+        self.assertEqual(poker.hand('As Kc 3d 4s 5s').rank, poker.Ranks.HIGH_CARD)
 
 
 class PairTestCase(unittest.TestCase):
@@ -132,8 +133,6 @@ class StraightTestCase(unittest.TestCase):
         self.assertGreater(poker.hand('3c 4s 5s 6s 7s'),
                            poker.hand('2c 3s 4s 5s 6s'))
 
-    # FIXME wheelie hands are scored incorrectly
-    @unittest.expectedFailure
     def testWheelieHand(self):
         self.assertGreater(poker.hand('2c 3s 4s 5s 6s'),
                            poker.hand('As 2c 3s 4s 5s'))
