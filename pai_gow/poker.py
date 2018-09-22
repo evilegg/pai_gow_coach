@@ -79,13 +79,13 @@ def _is_pair(cards):
     return [1, 1, 1, 2] == _count_matches(cards)
 
 
-class PokerHand(object):
+class Hand(object):
     """Base poker hand."""
     def __init__(self, card_specs=None):
         if card_specs is None:
             self.cards = []
         else:
-            self.cards = list(sorted([Card(spec) for spec in card_specs]))
+            self.cards = list(sorted([Card(spec) for spec in card_specs.split()]))
 
         _is_flush = is_flush(self.cards)
         _is_straight = is_straight(self.cards)
@@ -133,71 +133,56 @@ class PokerHand(object):
         return sorted_cards
 
 
-class StraightFlush(PokerHand):
+class StraightFlush(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
         self.rank = Ranks.STRAIGHT_FLUSH
 
 
-class FourOfaKind(PokerHand):
+class FourOfaKind(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
         self.rank = Ranks.FOUR_OFA_KIND
 
 
-class FullHouse(PokerHand):
+class FullHouse(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
         self.rank = Ranks.FULL_HOUSE
 
 
-class Flush(PokerHand):
+class Flush(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
         self.rank = Ranks.FLUSH
 
 
-class Straight(PokerHand):
+class Straight(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
         self.rank = Ranks.STRAIGHT
 
 
-class ThreeOfaKind(PokerHand):
+class ThreeOfaKind(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
         self.rank = Ranks.THREE_OFA_KIND
 
 
-class TwoPair(PokerHand):
+class TwoPair(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
         self.rank = Ranks.TWO_PAIR
 
 
-class Pair(PokerHand):
+class Pair(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
         self.rank = Ranks.PAIR
 
 
-class HighCard(PokerHand):
+class HighCard(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
         self.rank = Ranks.HIGH_CARD
 
-
-def hand(hand_specs):
-    """Build a poker hand"""
-    card_specs = hand_specs.split()
-    my_cards = list(sorted([Card(spec) for spec in card_specs]))
-    return PokerHand(card_specs)
-
-
-if '__main__' == __name__:
-    print hand('As 2s 3s 4s 5s').cards
-    print hand('As 2s 3s 4s 5s').rank
-    print hand('2s 3s 4s 5s 6s').rank
-
-    print hand('2s 3s 4s 5s 6s') > hand('As 2s 3s 4s 5s')
-    print hand('As 2s 3s 4s 5s') > hand('2s 2c 2h 2d 6s')
