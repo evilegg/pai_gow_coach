@@ -2,22 +2,25 @@
 
 
 import collections
+import enum
 
 
 from cards import Card
 
 
-class Ranks(object):
-    """The various legal poker hands."""
-    HIGH_CARD      = 1
-    PAIR           = 1 << 1
-    TWO_PAIR       = 1 << 2
-    THREE_OFA_KIND = 1 << 3
-    STRAIGHT       = 1 << 4
-    FLUSH          = 1 << 5
-    FULL_HOUSE     = 1 << 6
-    FOUR_OFA_KIND  = 1 << 7
-    STRAIGHT_FLUSH = 1 << 8
+Ranks = enum.IntEnum(
+    'Ranks',
+    'HIGH_CARD'
+    ' PAIR'
+    ' TWO_PAIR'
+    ' THREE_OFA_KIND'
+    ' STRAIGHT_WHEEL'
+    ' STRAIGHT'
+    ' FLUSH'
+    ' FULL_HOUSE'
+    ' FOUR_OFA_KIND'
+    ' STRAIGHT_FLUSH_WHEEL'
+    ' STRAIGHT_FLUSH')
 
 
 def is_flush(cards):
@@ -77,124 +80,125 @@ def _is_pair(cards):
     return [1, 1, 1, 2] == _count_matches(cards)
 
 
-class PokerHand(object):
+def assign_rank(cards):
+    """Assign the collection of cards a poker rank."""
+    _is_flush = is_flush(cards)
+    _is_straight = is_straight(cards)
+    _is_wheel = (is_straight and 
+                    cards and
+                    cards[0].rank == Card.RANKS['2']
+                    and cards[-1].rank == Card.RANKS['A'])
+
+    # pylint: disable=E1101
+    if _is_flush and _is_straight:
+        return Ranks.STRAIGHT_FLUSH_WHEEL if _is_wheel else Ranks.STRAIGHT_FLUSH
+    elif _is_four_ofa_kind(cards):
+        return Ranks.FOUR_OFA_KIND
+    elif _is_full_house(cards):
+        return Ranks.FULL_HOUSE
+    elif _is_flush:
+        return Ranks.FLUSH
+    elif _is_straight:
+        return Ranks.STRAIGHT_WHEEL if _is_wheel else Ranks.STRAIGHT
+    elif _is_three_ofa_kind(cards):
+        return Ranks.THREE_OFA_KIND
+    elif _is_two_pair(cards):
+        return Ranks.TWO_PAIR
+    elif _is_pair(cards):
+        return Ranks.PAIR
+    else:
+        return Ranks.HIGH_CARD
+
+
+class Hand(object):
     """Base poker hand."""
     def __init__(self, card_specs=None):
         if card_specs is None:
             self.cards = []
+            self.rank = None
         else:
-            self.cards = list(sorted([Card(spec) for spec in card_specs]))
-
-        _is_flush = is_flush(self.cards)
-        _is_straight = is_straight(self.cards)
-
-        if _is_flush and _is_straight:
-            self.rank = Ranks.STRAIGHT_FLUSH
-        elif _is_four_ofa_kind(self.cards):
-            self.rank = Ranks.FOUR_OFA_KIND
-        elif _is_full_house(self.cards):
-            self.rank = Ranks.FULL_HOUSE
-        elif _is_flush:
-            self.rank = Ranks.FLUSH
-        elif _is_straight:
-            self.rank = Ranks.STRAIGHT
-        elif _is_three_ofa_kind(self.cards):
-            self.rank = Ranks.THREE_OFA_KIND
-        elif _is_two_pair(self.cards):
-            self.rank = Ranks.TWO_PAIR
-        elif _is_pair(self.cards):
-            self.rank = Ranks.PAIR
-        else:
-            self.rank = Ranks.HIGH_CARD
+            self.cards = list(sorted([Card(spec) for spec in card_specs.split()]))
+            self.rank = assign_rank(self.cards)
 
     def __cmp__(self, other):
-        # FIXME: calculate by all cards not just first
-        lhs = self.cards[-1] if self.cards else None
-        rhs = other.cards[-1] if other.cards else None
+        return cmp(self.score(), other.score())
 
-        return cmp((self.rank, lhs), (other.rank, rhs))
+    def score(self):
+        return (self.rank, self.order_cards())
+
+    def order_cards(self):
+        if not self.cards:
+            return []
+
+        counter = collections.Counter()
+        for card in self.cards:
+            counter[card.rank] += 1
+
+        # sort cards by count then rank
+        sorted_cards = sorted([(cnt, rank) for rank, cnt in counter.items()],
+                              reverse=True)
+        return sorted_cards
 
 
-class StraightFlush(PokerHand):
+class StraightFlush(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
+        Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
         self.rank = Ranks.STRAIGHT_FLUSH
 
 
-class FourOfaKind(PokerHand):
+class FourOfaKind(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.FOUR_OFA_KIND
+        Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
+        self.rank = self.rank or Ranks.FOUR_OFA_KIND
 
 
-class FullHouse(PokerHand):
+class FullHouse(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.FULL_HOUSE
+        Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
+        self.rank = self.rank or Ranks.FULL_HOUSE
 
 
-class Flush(PokerHand):
+class Flush(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.FLUSH
+        Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
+        self.rank = self.rank or Ranks.FLUSH
 
 
-class Straight(PokerHand):
+class Straight(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.STRAIGHT
+        Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
+        self.rank = self.rank or Ranks.STRAIGHT
 
 
-class ThreeOfaKind(PokerHand):
+class ThreeOfaKind(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.THREE_OFA_KIND
+        Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
+        self.rank = self.rank or Ranks.THREE_OFA_KIND
 
 
-class TwoPair(PokerHand):
+class TwoPair(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.TWO_PAIR
+        Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
+        self.rank = self.rank or Ranks.TWO_PAIR
 
 
-class Pair(PokerHand):
+class Pair(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.PAIR
+        Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
+        self.rank = self.rank or Ranks.PAIR
 
 
-class HighCard(PokerHand):
+class HighCard(Hand):
     def __init__(self, *args, **kwargs):
-        PokerHand.__init__(self, *args, **kwargs)
-        self.rank = Ranks.HIGH_CARD
+        Hand.__init__(self, *args, **kwargs)
+        # pylint: disable=E1101
+        self.rank = self.rank or Ranks.HIGH_CARD
 
-
-def hand(hand_specs):
-    """Build a poker hand"""
-    card_specs = hand_specs.split()
-    my_cards = list(sorted([Card(spec) for spec in card_specs]))
-
-    _is_flush = is_flush(my_cards)
-    _is_straight = is_straight(my_cards)
-
-    ctor = PokerHand
-
-    if _is_flush and _is_straight:
-        ctor = StraightFlush
-    elif _is_four_ofa_kind(my_cards):
-        ctor = FourOfaKind
-    elif _is_full_house(my_cards):
-        ctor = FullHouse
-    elif _is_flush:
-        ctor = Flush
-    elif _is_straight:
-        ctor = Straight
-    elif _is_three_ofa_kind(my_cards):
-        ctor = ThreeOfaKind
-    elif _is_two_pair(my_cards):
-        ctor = TwoPair
-    elif _is_pair(my_cards):
-        ctor = Pair
-    else:
-        ctor = HighCard
-    return ctor(card_specs)
