@@ -24,33 +24,43 @@ Ranks = enum.IntEnum(
 
 
 def is_flush(cards):
-    suit = None
-    for card in cards:
-        if suit is None:
-            suit = card.suit
-        elif card.suit != suit:
-            return False
-    return True
+    return all(e.suit == cards[0].suit for e in cards)
 
 
 def is_straight(cards):
+    if len(cards) != 5:
+        return False
+
     # catch the wheel which doesn't come in order when sorted
-    if (cards and
-        cards[0].rank == Card.RANKS['2'] and
-        cards[1].rank == Card.RANKS['3'] and
-        cards[2].rank == Card.RANKS['4'] and
-        cards[3].rank == Card.RANKS['5'] and
-        cards[4].rank == Card.RANKS['A']):
+    if (cards[0].score() == Card.RANKS['2'] and
+        cards[1].score() == Card.RANKS['3'] and
+        cards[2].score() == Card.RANKS['4'] and
+        cards[3].score() == Card.RANKS['5'] and
+        cards[4].score() == Card.RANKS['A']):
         return True
 
-    last_rank = None
-    for card in cards:
-        if last_rank is None:
-            last_rank = card.rank
-        elif last_rank + 1 != card.rank:
+    last_card = cards[0]
+    for card in cards[1:]:
+        if card.score() != last_card.score() + 1:
             return False
-        last_rank = card.rank
+        last_card = card
+
     return True
+
+
+def is_wheel(cards):
+    if len(cards) != 5:
+        return False
+
+    # catch the wheel which doesn't come in order when sorted
+    if (cards[0].score() == Card.RANKS['2'] and
+        cards[1].score() == Card.RANKS['3'] and
+        cards[2].score() == Card.RANKS['4'] and
+        cards[3].score() == Card.RANKS['5'] and
+        cards[4].score() == Card.RANKS['A']):
+        return True
+
+    return False
 
 
 def _count_matches(cards):
@@ -79,27 +89,29 @@ def _is_two_pair(cards):
 def _is_pair(cards):
     return [1, 1, 1, 2] == _count_matches(cards)
 
+# TODO: store cards highest rank to lowest rank to simplify straight/wheel scoring
 
 def assign_rank(cards):
     """Assign the collection of cards a poker rank."""
     _is_flush = is_flush(cards)
     _is_straight = is_straight(cards)
-    _is_wheel = (is_straight and 
-                    cards and
-                    cards[0].rank == Card.RANKS['2']
-                    and cards[-1].rank == Card.RANKS['A'])
+    _is_wheel = is_wheel(cards)
 
     # pylint: disable=E1101
+    if _is_flush and _is_wheel:
+        return Ranks.STRAIGHT_FLUSH_WHEEL
     if _is_flush and _is_straight:
-        return Ranks.STRAIGHT_FLUSH_WHEEL if _is_wheel else Ranks.STRAIGHT_FLUSH
+        return Ranks.STRAIGHT_FLUSH
     elif _is_four_ofa_kind(cards):
         return Ranks.FOUR_OFA_KIND
     elif _is_full_house(cards):
         return Ranks.FULL_HOUSE
     elif _is_flush:
         return Ranks.FLUSH
+    elif _is_wheel:
+        return Ranks.STRAIGHT_WHEEL
     elif _is_straight:
-        return Ranks.STRAIGHT_WHEEL if _is_wheel else Ranks.STRAIGHT
+        return Ranks.STRAIGHT
     elif _is_three_ofa_kind(cards):
         return Ranks.THREE_OFA_KIND
     elif _is_two_pair(cards):
@@ -120,11 +132,18 @@ class Hand(object):
             self.cards = list(sorted([Card(spec) for spec in card_specs.split()]))
             self.rank = assign_rank(self.cards)
 
-    def __cmp__(self, other):
-        return cmp(self.score(), other.score())
+    def __eq__(self, other_hand):
+        return self.score() == other_hand.score()
+    
+    def __lt__(self, other_hand):
+        return self.score() < other_hand.score()
 
+    def __repr__(self):
+        cards = [''.join([c.rank, c.suit]) for c in self.cards]
+        return str(' '.join(cards))
+    
     def score(self):
-        return (self.rank, self.order_cards())
+        return (self.rank,) + tuple(self.order_cards())
 
     def order_cards(self):
         if not self.cards:
@@ -132,11 +151,10 @@ class Hand(object):
 
         counter = collections.Counter()
         for card in self.cards:
-            counter[card.rank] += 1
+            counter[card.score()] += 1
 
         # sort cards by count then rank
-        sorted_cards = sorted([(cnt, rank) for rank, cnt in counter.items()],
-                              reverse=True)
+        sorted_cards = sorted([(cnt, rank) for rank, cnt in counter.items()], reverse=True)
         return sorted_cards
 
 
@@ -202,3 +220,7 @@ class HighCard(Hand):
         # pylint: disable=E1101
         self.rank = self.rank or Ranks.HIGH_CARD
 
+
+if '__main__' == __name__:
+    assert Hand('As 3s 4s 5s 6s').rank == Ranks.FLUSH
+    print(Hand('As 2s 3s 4s 5s'))
