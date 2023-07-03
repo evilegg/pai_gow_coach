@@ -91,77 +91,62 @@ class PokerHandIdentification(unittest.TestCase):
 
 
 class PairTestCase(unittest.TestCase):
+    # pylint: disable=E1101
     def testHigherHandWins(self):
-        self.assertGreater(poker.Hand('As Ks Kc 3s 5s'),
-                           poker.Hand('Qc Qs 2h 3h 4h'))
+        self.assertGreater(poker.Hand('As Ks Kc 3s 5s'), poker.Hand('Qc Qs 2h 3h 4h'))
 
     def testFirstKicker(self):
-        self.assertGreater(poker.Hand('As Ac 8s 6s 4s'),
-                           poker.Hand('Ad Ah 7h 6h 4h'))
+        self.assertGreater(poker.Hand('As Ac 8s 6s 4s'), poker.Hand('Ad Ah 7h 6h 4h'))
 
     def testSecondKicker(self):
-        self.assertGreater(poker.Hand('As Ac 8s 6s 4s'),
-                           poker.Hand('Ad Ah 8h 5h 4h'))
+        self.assertGreater(poker.Hand('As Ac 8s 6s 4s'), poker.Hand('Ad Ah 8h 5h 4h'))
 
     def testThirdKicker(self):
-        self.assertGreater(poker.Hand('As Ac 8s 6s 4s'),
-                           poker.Hand('Ad Ah 8h 6h 3h'))
+        self.assertGreater(poker.Hand('As Ac 8s 6s 4s'), poker.Hand('Ad Ah 8h 6h 3h'))
 
 class TwoPairTestCase(unittest.TestCase):
     def testHigherHandWins(self):
-        self.assertGreater(poker.Hand('As Ac 3d 3s 5s'),
-                           poker.Hand('Ks Kc 3d 5c 5d'))
+        self.assertGreater(poker.Hand('As Ac 3d 3s 5s'), poker.Hand('Ks Kc 3d 5c 5d'))
 
     def testMismatchedHigherHand(self):
-        self.assertGreater(poker.Hand('Ks Kc 3d 5c 5d'),
-                           poker.Hand('As 3d 3s 4d 4s'))
+        self.assertGreater(poker.Hand('Ks Kc 3d 5c 5d'), poker.Hand('As 3d 3s 4d 4s'))
 
     def testKicker(self):
-        self.assertGreater(poker.Hand('Ks Kc 3s 3c 5d'),
-                           poker.Hand('Kd Kh 3d 3c 4d'))
+        self.assertGreater(poker.Hand('Ks Kc 3s 3c 5d'), poker.Hand('Kd Kh 3d 3c 4d'))
 
 
 class ThreeOfaKindTestCase(unittest.TestCase):
     def testHigherHandWins(self):
-        self.assertGreater(poker.Hand('As Ac Ad 3s 5s'),
-                           poker.Hand('Ks Kc Ks 3d 5d'))
+        self.assertGreater(poker.Hand('As Ac Ad 3s 5s'), poker.Hand('Ks Kc Ks 3d 5d'))
 
     def testRankingHandIsntHighest(self):
-        self.assertGreater(poker.Hand('Qs 5s 5c 5d 3s'),
-                           poker.Hand('Ac 2d 2s 2c 7d'))
+        self.assertGreater(poker.Hand('Qs 5s 5c 5d 3s'), poker.Hand('Ac 2d 2s 2c 7d'))
 
 
 class StraightTestCase(unittest.TestCase):
     def testHigherHandWins(self):
-        self.assertGreater(poker.Hand('3c 4s 5s 6s 7s'),
-                           poker.Hand('2c 3s 4s 5s 6s'))
+        self.assertGreater(poker.Hand('3c 4s 5s 6s 7s'), poker.Hand('2c 3s 4s 5s 6s'))
 
     def testWheelieHand(self):
-        self.assertGreater(poker.Hand('2c 3s 4s 5s 6s'),
-                           poker.Hand('As 2c 3s 4s 5s'))
+        self.assertGreater(poker.Hand('2c 3s 4s 5s 6s'), poker.Hand('As 2c 3s 4s 5s'))
 
 
 class FlushTestCase(unittest.TestCase):
     def testHigherHandWins(self):
-        self.assertGreater(poker.Hand('As 3s 4s 5s 6s'),
-                           poker.Hand('Ks 3s 4s 5s 6s'))
+        self.assertGreater(poker.Hand('As 3s 4s 5s 6s'), poker.Hand('Ks 3s 4s 5s 6s'))
 
 
 class FourOfaKindTestCase(unittest.TestCase):
     def testHigherHandWins(self):
-        self.assertGreater(poker.Hand('As Ac Ad Ah 6s'),
-                           poker.Hand('Ts Tc Td Th 8s'))
+        self.assertGreater(poker.Hand('As Ac Ad Ah 6s'), poker.Hand('Ts Tc Td Th 8s'))
 
 
 class StraightFlushTestCase(unittest.TestCase):
     def testHigherHandWins(self):
-        self.assertGreater(poker.Hand('3c 4c 5c 6c 7c'),
-                           poker.Hand('2s 3s 4s 5s 6s'))
+        self.assertGreater(poker.Hand('3c 4c 5c 6c 7c'), poker.Hand('2s 3s 4s 5s 6s'))
 
     def testWheelieHand(self):
-        self.assertGreater(poker.Hand('2s 3s 4s 5s 6s'),
-                           poker.Hand('As 2s 3s 4s 5s'))
-
+        self.assertGreater(poker.Hand('2s 3s 4s 5s 6s'), poker.Hand('As 2s 3s 4s 5s'))
 
 
 if '__main__' == __name__:
